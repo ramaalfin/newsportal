@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\NewsCollection;
+use App\Models\Category;
 use App\Models\News;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class NewsController extends Controller
@@ -56,7 +58,7 @@ class NewsController extends Controller
      */
     public function show(News $news)
     {
-        //
+
     }
 
     /**
@@ -64,7 +66,12 @@ class NewsController extends Controller
      */
     public function edit(News $news)
     {
-        //
+        $news->load('user', 'category');
+        return Inertia::render('EditNews', [
+            "title" => "Edit News",
+            "myNews" => $news,
+            "categories" => Category::orderBy('name')->get()
+        ]);
     }
 
     /**
@@ -72,7 +79,20 @@ class NewsController extends Controller
      */
     public function update(Request $request, News $news)
     {
-        //
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'category_id' => 'required|exists:categories,id'
+        ]);
+
+        $news->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'category_id' => $request->category_id,
+            'user_id' => Auth::id()
+        ]);
+
+        return redirect()->back()->with('message', 'News has been successfully updated!');
     }
 
     /**
@@ -80,6 +100,10 @@ class NewsController extends Controller
      */
     public function destroy(News $news)
     {
-        //
+        // if ($news->user_id !== Auth::id()) {
+        //     abort(403, 'Unauthorized');
+        // }
+        $news->delete();
+        return redirect()->back()->with('message', 'News has been successfully deleted!');
     }
 }

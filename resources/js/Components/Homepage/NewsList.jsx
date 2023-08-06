@@ -15,7 +15,7 @@ const isNews = (news) => {
                     </h2>
                     <p>{data.description}</p>
                     <div className="card-actions justify-end">
-                        <div className="badge badge-outline">{data.user.email}</div>
+                        <div className="badge badge-outline">{data.user.name}</div>
                         <div className="badge badge-inline bg-slate-900 text-white">{data.category.name}</div>
                     </div>
                 </div>
