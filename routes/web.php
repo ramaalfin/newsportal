@@ -1,18 +1,13 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
-
     Route::get('/', [NewsController::class, 'index'])->name('home');
-
-    Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-
-    // Post
+    Route::get('/myNews', [NewsController::class, 'myNews'])->middleware(['auth', 'verified'])->name('myNews');
     Route::resource('news', NewsController::class)->middleware(['auth', 'verified']);
     Route::resource('category', CategoryController::class)->middleware(['auth', 'verified']);
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

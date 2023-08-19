@@ -3,10 +3,10 @@ import { Head, Link } from "@inertiajs/react";
 import { useEffect } from "react";
 import { Inertia } from "@inertiajs/inertia"; // Import Inertia
 
-export default function Dashboard({ auth, myNews }) {
+export default function MyNews({ auth, myNews }) {
     useEffect(() => {
         if (!myNews) {
-            Inertia.get("/dashboard");
+            Inertia.get(route('myNews'));
         }
         return;
     }, []);
@@ -24,11 +24,11 @@ export default function Dashboard({ auth, myNews }) {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Berita Saya
+                    My News
                 </h2>
             }
         >
-            <Head title="Dashboard" />
+            <Head title="My News" />
 
             <div className="py-12">
                 {/* berita */}

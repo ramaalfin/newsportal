@@ -25,6 +25,14 @@ class NewsController extends Controller
         ]);
     }
 
+    public function myNews(){
+        $categories = Category::all();
+        return Inertia::render('Post/MyNews', [
+            'categories' => $categories,
+            'myNews' => News::with(['category', 'user'])->where('user_id', auth()->user()->id)->latest()->get(),
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

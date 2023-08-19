@@ -40,11 +40,11 @@ export default function EditNews(props) {
                 header={
                     <div className="flex">
                         <Link
-                            href={route("dashboard")}
+                            href={route("myNews")}
                             method="get"
                             as="button"
                         >
-                            Dashboard
+                            My News
                         </Link>{" "}
                         <span className="mx-2">/</span>
                         <h2 className="font-semibold text-xl text-gray-800 leading-tight">
