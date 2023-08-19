@@ -33,7 +33,7 @@ const PostCreate = (props) => {
     };
     return (
         <div className="min-h-screen bg-slate-50">
-            <Head title={props.title}></Head>
+            <Head title={props.title} />
             <AuthenticatedLayout
                 user={props.auth.user}
                 header={

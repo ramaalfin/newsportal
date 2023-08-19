@@ -78,7 +78,7 @@ export default function Authenticated({ user, header, children }) {
                                             Post
                                         </Dropdown.Link>
                                         <Dropdown.Link
-                                            href="#"
+                                            href={route('category.index')}
                                             className="justify-between"
                                             as="button"
                                         >

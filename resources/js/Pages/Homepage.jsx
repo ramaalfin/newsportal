@@ -12,12 +12,12 @@ export default function Homepage(props) {
             <AuthenticatedLayout
                 user={auth.user}
             >
-            <div className="flex justify-center flex-col lg:flex-row lg:flex-wrap items-start gap-4 p-4">
-                <NewsList news={props.news.data} />
-            </div>
-            <div className="row mt-3 flex justify-center items-center">
-                <Paginator news={props.news}/>
-            </div>
+                <div className="flex justify-center flex-col lg:flex-row lg:flex-wrap items-start gap-4 p-4">
+                    <NewsList news={props.news.data} />
+                </div>
+                <div className="row mt-3 flex justify-center items-center">
+                    <Paginator news={props.news}/>
+                </div>
             </AuthenticatedLayout>
         </div>
     );

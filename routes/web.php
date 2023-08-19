@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProfileController;
@@ -13,6 +14,7 @@ Route::middleware('auth')->group(function () {
 
     // Post
     Route::resource('news', NewsController::class)->middleware(['auth', 'verified']);
+    Route::resource('category', CategoryController::class)->middleware(['auth', 'verified']);
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
