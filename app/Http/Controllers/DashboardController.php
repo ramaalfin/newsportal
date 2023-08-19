@@ -13,7 +13,7 @@ class DashboardController extends Controller
         $categories = Category::all();
         return Inertia::render('Dashboard', [
             'categories' => $categories,
-            'myNews' => News::with(['category', 'user'])->where('user_id', auth()->user()->id)->orderByDesc('created_at')->get(),
+            'myNews' => News::with(['category', 'user'])->where('user_id', auth()->user()->id)->latest()->get(),
         ]);
     }
 }

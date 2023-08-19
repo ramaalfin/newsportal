@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\NewsCollection;
+use App\Http\Requests\CreateNewsRequest;
+use App\Http\Requests\EditNewsRequest;
 use App\Models\Category;
 use App\Models\News;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class NewsController extends Controller
@@ -16,7 +17,7 @@ class NewsController extends Controller
      */
     public function index()
     {
-        $news = News::with(['category', 'user'])->orderByDesc('created_at')->paginate(10);
+        $news = News::with(['category', 'user'])->latest()->paginate(10);
 
         return Inertia::render('Homepage', [
             'title' => 'Homepage',
@@ -29,26 +30,34 @@ class NewsController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+        return Inertia::render('Post/Create', [
+            'title' => "Post Create",
+            'categories' => $categories
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateNewsRequest $request)
     {
-        $request->validate([
-            'title' => 'required|string',
-            'description' => 'required|string',
-            'category_id' => 'required|exists:categories,id'
-        ]);
+        // upload image
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagePath = $image->storeAs('public/news', $image->hashName());
+            $imageName = basename($imagePath);
+        }
 
-        News::create([
+        $news = News::create([
+            'image' => $imageName,
             'title' => $request->title,
             'description' => $request->description,
             'category_id' => $request->category_id,
             'user_id' => auth()->user()->id
         ]);
+
+        $news->image = Storage::url($imageName);
 
         return redirect()->back()->with('message', 'News has beed successfully created');
     }
@@ -58,7 +67,11 @@ class NewsController extends Controller
      */
     public function show(News $news)
     {
-
+        return Inertia::render('Post/Show', [
+            'title' => "Detail News",
+            'news' => $news,
+            'categories' => Category::all()
+        ]);
     }
 
     /**
@@ -67,7 +80,7 @@ class NewsController extends Controller
     public function edit(News $news)
     {
         $news->load('user', 'category');
-        return Inertia::render('EditNews', [
+        return Inertia::render('Post/Edit', [
             "title" => "Edit News",
             "myNews" => $news,
             "categories" => Category::orderBy('name')->get()
@@ -77,20 +90,30 @@ class NewsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, News $news)
+    public function update(EditNewsRequest $request, News $news)
     {
-        $request->validate([
-            'title' => 'required|string',
-            'description' => 'required|string',
-            'category_id' => 'required|exists:categories,id'
-        ]);
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagePath = $image->storeAs('public/news', $image->hashName());
+            $imageName = basename($imagePath);
 
-        $news->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'category_id' => $request->category_id,
-            'user_id' => Auth::id()
-        ]);
+            Storage::delete('public/news/' . $news->image);
+
+            $news->update([
+                'image' => $imageName,
+                'title' => $request->title,
+                'description' => $request->description,
+                'category_id' => $request->category_id,
+                'user_id' => Auth::id()
+            ]);
+        } else {
+            $news->update([
+                'title' => $request->title,
+                'description' => $request->description,
+                'category_id' => $request->category_id,
+                'user_id' => Auth::id()
+            ]);
+        }
 
         return redirect()->back()->with('message', 'News has been successfully updated!');
     }
