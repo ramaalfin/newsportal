@@ -29,7 +29,7 @@ export default function Authenticated({ user, header, children }) {
                                     My News
                                 </NavLink>
                                 <NavLink
-                                    href="#"
+                                    href={route('about')}
                                     active={route().current("about")}
                                 >
                                     About me
