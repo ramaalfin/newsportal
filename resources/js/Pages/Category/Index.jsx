@@ -2,6 +2,7 @@ import { Head, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Inertia } from "@inertiajs/inertia";
 import { useEffect, useState } from "react";
+import Paginator from "@/Components/Category/Paginator";
 
 const CategoryTable = ({ categories, title, auth, flash }) => {
     let counter = 1;
@@ -33,6 +34,7 @@ const CategoryTable = ({ categories, title, auth, flash }) => {
             });
         }
     };
+
     return (
         <div className="min-h-screen bg-slate-50">
             <Head title={title} />
@@ -65,7 +67,7 @@ const CategoryTable = ({ categories, title, auth, flash }) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {categories.map((data, i) => (
+                                    {categories.data.map((data, i) => (
                                         <tr key={i}>
                                             <td>{counter++}</td>
                                             <td>{data.name}</td>
@@ -96,6 +98,9 @@ const CategoryTable = ({ categories, title, auth, flash }) => {
                             </table>
                         </div>
                     </div>
+                </div>
+                <div className="row mt-3 flex justify-center items-center">
+                    <Paginator categories={categories}/>
                 </div>
             </AuthenticatedLayout>
         </div>

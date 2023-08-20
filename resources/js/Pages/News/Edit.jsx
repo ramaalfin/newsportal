@@ -15,7 +15,7 @@ export default function EditNews(props) {
             setIsNotif(true);
             setTimeout(() => {
                 setIsNotif(false)
-            }, 4000);
+            }, 2000);
         }
     }, [props.flash.message])
 
@@ -34,10 +34,6 @@ export default function EditNews(props) {
         formData.append("_method", "PUT"); // Specify the PUT method for Inertia
 
         Inertia.post(`/news/${props.myNews.id}`, formData);
-        setIsNotif(true);
-        setTimeout(() => {
-            setIsNotif(false);
-        }, 4000);
     };
 
     return (

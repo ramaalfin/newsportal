@@ -3,7 +3,7 @@ import { Head, Link } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
 import React, { useEffect, useState } from "react";
 
-const CategoryCreate = (props) => {
+const TagCreate = (props) => {
     const [name, setName] = useState("");
     const [isNotif, setIsNotif] = useState(props.flash.message);
 
@@ -17,7 +17,7 @@ const CategoryCreate = (props) => {
     })
 
     const handleSubmit = () => {
-        Inertia.post("/category", {
+        Inertia.post("/tag", {
             name: name
         });
         setName("");
@@ -30,7 +30,7 @@ const CategoryCreate = (props) => {
                 header={
                     <div className="flex items-center">
                         <Link
-                            href={route("category.index")}
+                            href={route("tag.index")}
                             method="get"
                             as="button"
                             className="hover:text-slate-950"
@@ -39,7 +39,7 @@ const CategoryCreate = (props) => {
                         </Link>{" "}
                         <span className="mx-2">/</span>
                         <h2 className="font-semibold text-gray-800 leading-tight">
-                            Create Category
+                            Create Tag
                         </h2>
                     </div>
                 }
@@ -68,7 +68,7 @@ const CategoryCreate = (props) => {
                         )}
                         <input
                             type="text"
-                            placeholder="Category Name"
+                            placeholder="Tag Name"
                             className="m-2 input input-bordered w-full"
                             value={name}
                             onChange={(event) => setName(event.target.value)}
@@ -86,4 +86,4 @@ const CategoryCreate = (props) => {
     );
 }
 
-export default CategoryCreate;
+export default TagCreate;
