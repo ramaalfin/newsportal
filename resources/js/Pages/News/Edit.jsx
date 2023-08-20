@@ -7,6 +7,7 @@ export default function EditNews(props) {
     const [title, setTitle] = useState(props.myNews.title);
     const [description, setDescription] = useState(props.myNews.description);
     const [category, setCategory] = useState(props.myNews.category_id);
+    const [tags, setTags] = useState(props.myNews.tags.map(tag => tag.name).join(", "));
     const [image, setImage] = useState(null);
     const [isNotif, setIsNotif] = useState(false);
 
@@ -14,10 +15,10 @@ export default function EditNews(props) {
         if (props.flash.message) {
             setIsNotif(true);
             setTimeout(() => {
-                setIsNotif(false)
+                setIsNotif(false);
             }, 2000);
         }
-    }, [props.flash.message])
+    }, [props.flash.message]);
 
     const handleImageChange = (event) => {
         setImage(event.target.files[0]);
@@ -30,8 +31,12 @@ export default function EditNews(props) {
         }
         formData.append("title", title);
         formData.append("description", description);
+
+        const tagsArray = tags.split(',').map(tag => tag.trim());
+        formData.append("tags", tagsArray);
+
         formData.append("category_id", category);
-        formData.append("_method", "PUT"); // Specify the PUT method for Inertia
+        formData.append("_method", "PUT");
 
         Inertia.post(`/news/${props.myNews.id}`, formData);
     };
@@ -130,6 +135,14 @@ export default function EditNews(props) {
                                     setDescription(event.target.value)
                                 }
                             ></textarea>
+
+                            <input
+                                type="text"
+                                placeholder="Tags (separated by comma)"
+                                className="m-2 input input-bordered w-full"
+                                defaultValue={tags}
+                                onChange={(event) => setTags(event.target.value)}
+                            />
 
                             <button
                                 className="m-2 btn btn-primary w-full"

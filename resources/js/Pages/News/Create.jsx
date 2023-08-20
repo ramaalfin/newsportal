@@ -1,12 +1,13 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import React, { useEffect, useState } from "react";
-import { Inertia } from "@inertiajs/inertia"; // Import Inertia
+import { Inertia } from "@inertiajs/inertia";
 import { Head, Link } from "@inertiajs/react";
 
 const PostCreate = (props) => {
     const [image, setImage] = useState(null);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [tags, setTags] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
     const [isNotif, setIsNotif] = useState(false);
 
@@ -27,6 +28,7 @@ const PostCreate = (props) => {
         const formData = new FormData();
         formData.append("title", title);
         formData.append("description", description);
+        formData.append("tags", tags);
         formData.append("category_id", selectedCategory);
         if (image) {
             formData.append("image", image);
@@ -36,6 +38,7 @@ const PostCreate = (props) => {
         setImage(null);
         setTitle("");
         setDescription("");
+        setTags("");
         setSelectedCategory("");
     };
     return (
@@ -120,6 +123,13 @@ const PostCreate = (props) => {
                                 setDescription(event.target.value)
                             }
                         ></textarea>
+                        <input
+                            type="text"
+                            placeholder="Tags (separated by comma)"
+                            className="m-2 input input-bordered w-full"
+                            value={tags}
+                            onChange={(event) => setTags(event.target.value)}
+                        />
                         <button
                             className="m-2 btn btn-primary w-full"
                             onClick={handleSubmit}

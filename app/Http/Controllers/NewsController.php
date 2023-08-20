@@ -6,6 +6,7 @@ use App\Http\Requests\CreateNewsRequest;
 use App\Http\Requests\EditNewsRequest;
 use App\Models\Category;
 use App\Models\News;
+use App\Models\Tag;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -25,7 +26,8 @@ class NewsController extends Controller
         ]);
     }
 
-    public function myNews(){
+    public function myNews()
+    {
         $categories = Category::all();
         $news = News::with(['category', 'user'])->where('user_id', auth()->user()->id)->latest()->paginate(9);
         return Inertia::render('News/MyNews', [
@@ -51,6 +53,8 @@ class NewsController extends Controller
      */
     public function store(CreateNewsRequest $request)
     {
+        $tags = explode(',', $request->tags);
+
         $newsData = [
             'title' => $request->title,
             'description' => $request->description,
@@ -64,10 +68,14 @@ class NewsController extends Controller
             $imageName = basename($imagePath);
 
             $newsData['image'] = $imageName;
-            $newsData['image'] = Storage::url($imageName);
         }
 
-        News::create($newsData);
+        $news = News::create($newsData);
+
+        foreach ($tags as $tagName) {
+            $tag = Tag::firstOrCreate(['name' => $tagName]);
+            $news->tags()->attach($tag);
+        }
 
         return redirect()->back()->with('message', 'News has been successfully created');
     }
@@ -89,7 +97,7 @@ class NewsController extends Controller
      */
     public function edit(News $news)
     {
-        $news->load('user', 'category');
+        $news->load('user', 'category', 'tags');
         return Inertia::render('News/Edit', [
             "title" => "Edit News",
             "myNews" => $news,
@@ -102,6 +110,23 @@ class NewsController extends Controller
      */
     public function update(EditNewsRequest $request, News $news)
     {
+        $tags = explode(',', $request->tags);
+
+        $existingTags = Tag::pluck('name')->toArray();
+        $newTags = array_diff($tags, $existingTags);
+
+        foreach ($newTags as $newTagName) {
+            $tag = Tag::create(['name' => $newTagName]);
+            $tags[] = $tag->name;
+        }
+
+        $dataToUpdate = [
+            'title' => $request->title,
+            'description' => $request->description,
+            'category_id' => $request->category_id,
+            'user_id' => Auth::id()
+        ];
+
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imagePath = $image->storeAs('public/news', $image->hashName());
@@ -109,21 +134,11 @@ class NewsController extends Controller
 
             Storage::delete('public/news/' . $news->image);
 
-            $news->update([
-                'image' => $imageName,
-                'title' => $request->title,
-                'description' => $request->description,
-                'category_id' => $request->category_id,
-                'user_id' => Auth::id()
-            ]);
-        } else {
-            $news->update([
-                'title' => $request->title,
-                'description' => $request->description,
-                'category_id' => $request->category_id,
-                'user_id' => Auth::id()
-            ]);
+            $dataToUpdate['image'] = $imageName;
         }
+
+        $news->update($dataToUpdate);
+        $news->tags()->sync(Tag::whereIn('name', $tags)->pluck('id'));
 
         return redirect()->back()->with('message', 'News has been successfully updated!');
     }

@@ -25,6 +25,7 @@ class EditNewsRequest extends FormRequest
             'image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
             'title' => 'required|string',
             'description' => 'required|string',
+            'tags' => 'required|string',
             'category_id' => 'required|exists:categories,id'
         ];
     }
