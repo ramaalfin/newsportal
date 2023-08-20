@@ -85,7 +85,7 @@ export default function Authenticated({ user, header, children }) {
                                             Category
                                         </Dropdown.Link>
                                         <Dropdown.Link
-                                            href="#"
+                                            href={route('tag.index')}
                                             className="justify-between"
                                             as="button"
                                         >

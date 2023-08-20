@@ -14,7 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::orderBy('name')->paginate(5);
         return Inertia::render('Category/Index', [
             'title' => "Category",
             'categories' => $categories
@@ -40,14 +40,6 @@ class CategoryController extends Controller
             'name' => $request->name
         ]);
         return redirect()->back()->with('message', 'Category has been successfully created');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Category $category)
-    {
-        //
     }
 
     /**

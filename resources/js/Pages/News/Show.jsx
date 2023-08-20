@@ -5,10 +5,6 @@ import { useState } from "react";
 export default function EditNews(props) {
     const [ selectedCategoryId, setSelectedCategoryId] = useState(props.news.category_id);
 
-    const handleCategoryChange = (event) => {
-        setSelectedCategoryId(event.target.value);
-    };
-
     const selectedCategory = props.categories.find(category => category.id == selectedCategoryId);
 
     return (

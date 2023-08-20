@@ -15,7 +15,7 @@ const PostCreate = (props) => {
             setIsNotif(true);
             setTimeout(() => {
                 setIsNotif(false);
-            }, 4000);
+            }, 2000);
         }
     }, [props.flash.message]);
 
