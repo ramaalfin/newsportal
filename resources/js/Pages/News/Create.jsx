@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Inertia } from "@inertiajs/inertia"; // Import Inertia
 import { Head, Link } from "@inertiajs/react";
 
@@ -10,26 +10,33 @@ const PostCreate = (props) => {
     const [selectedCategory, setSelectedCategory] = useState("");
     const [isNotif, setIsNotif] = useState(false);
 
+    useEffect(() => {
+        if (props.flash.message) {
+            setIsNotif(true);
+            setTimeout(() => {
+                setIsNotif(false);
+            }, 4000);
+        }
+    }, [props.flash.message]);
+
     const handleImageChange = (event) => {
         setImage(event.target.files[0]);
     };
 
     const handleSubmit = () => {
         const formData = new FormData();
-        formData.append("image", image);
         formData.append("title", title);
         formData.append("description", description);
         formData.append("category_id", selectedCategory);
+        if (image) {
+            formData.append("image", image);
+        }
 
         Inertia.post("/news", formData);
-        setIsNotif(true);
-        setImage("");
+        setImage(null);
         setTitle("");
         setDescription("");
         setSelectedCategory("");
-        setTimeout(() => {
-            setIsNotif(false);
-        }, 4000);
     };
     return (
         <div className="min-h-screen bg-slate-50">
@@ -56,7 +63,7 @@ const PostCreate = (props) => {
                 <div className="max-w-7xl mx-auto mt-4 sm:px-6 lg:px-8">
                     <div className="p-6 bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         {isNotif && (
-                            <div className="alert alert-success">
+                            <div className="alert alert-success mb-4">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="stroke-current shrink-0 h-6 w-6"
@@ -71,7 +78,7 @@ const PostCreate = (props) => {
                                     />
                                 </svg>
                                 <span>
-                                    News has been successfully created!!
+                                    {props.flash.message}
                                 </span>
                             </div>
                         )}

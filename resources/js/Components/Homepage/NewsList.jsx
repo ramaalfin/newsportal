@@ -4,16 +4,23 @@ const isNews = (news) => {
     return news.map((data, i) => {
         return (
             <div key={i} className="card w-full lg:w-96 bg-base-100 shadow-xl">
-                <figure>
-                    {data.image && <img src={`/storage/news/${data.image}`} alt="News image" />}
-                </figure>
+                {data.image && (
+                    <figure>
+                        <img
+                            src={`/storage/news/${data.image}`}
+                            alt="News image"
+                        />
+                    </figure>
+                )}
                 <div className="card-body">
                     <h2 className="card-title">{data.title}</h2>
                     <p>{data.description}</p>
 
                     <div className="card-actions justify-between">
                         <div>
-                            <Link href={route('news.show', { news: data.id })}>Show more</Link>
+                            <Link href={route("news.show", { news: data.id })}>
+                                Show more
+                            </Link>
                         </div>
                         <div>
                             <div className="badge badge-outline">

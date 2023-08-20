@@ -1,20 +1,25 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Inertia } from "@inertiajs/inertia"; // Import Inertia
 
-export default function MyNews({ auth, myNews }) {
+export default function MyNews({ auth, myNews, flash }) {
+    const [deleteMessage, setDeleteMessage] = useState(flash.message);
     useEffect(() => {
-        if (!myNews) {
-            Inertia.get(route('myNews'));
+        if (deleteMessage) {
+            const timeout = setTimeout(() => {
+                setDeleteMessage("");
+            }, 2000);
+            return () => clearTimeout(timeout);
         }
-        return;
-    }, []);
+    })
 
-    const handleDelete = (newsId) => {
+    const handleDelete = (id) => {
         if (confirm("Are you sure want to delete this news?")) {
-            Inertia.delete(`/news/${newsId}`).then(() => {
-                Inertia.reload();
+            Inertia.delete(`/news/${id}`).then(() => {
+                Inertia.reload({
+                    only: ['flash']
+                });
             });
         }
     };
@@ -30,9 +35,13 @@ export default function MyNews({ auth, myNews }) {
         >
             <Head title="My News" />
 
-            <div className="py-12">
-                {/* berita */}
+            <div className="py-4">
                 <div className="flex justify-center flex-col lg:flex-row lg:flex-wrap items-start gap-4 mx-8 my-4">
+                { deleteMessage && (
+                    <div className="alert alert-success mb-4">
+                        {deleteMessage}
+                    </div>
+                ) }
                     {myNews && myNews.length > 0 ? (
                         myNews.map((news, i) => {
                             return (
@@ -40,12 +49,14 @@ export default function MyNews({ auth, myNews }) {
                                     key={i}
                                     className="card w-full lg:w-96 bg-base-100 shadow-xl mb-4"
                                 >
-                                    <figure>
-                                        <img
-                                            src={`/storage/news/${news.image}`}
-                                            alt="image news"
-                                        />
-                                    </figure>
+                                    {news.image && (
+                                        <figure>
+                                            <img
+                                                src={`/storage/news/${news.image}`}
+                                                alt="image news"
+                                            />
+                                        </figure>
+                                    )}
                                     <div className="card-body">
                                         <h2 className="card-title">
                                             {news.title}
@@ -62,10 +73,27 @@ export default function MyNews({ auth, myNews }) {
                                             </div>
                                             <div className="">
                                                 <div className="badge bg-warning">
-                                                    <Link href={route('news.edit', { news: news.id })} method="get" as="button">edit</Link>
+                                                    <Link
+                                                        href={route(
+                                                            "news.edit",
+                                                            { news: news.id }
+                                                        )}
+                                                        method="get"
+                                                        as="button"
+                                                    >
+                                                        edit
+                                                    </Link>
                                                 </div>
                                                 <div className="badge bg-red-600 text-white">
-                                                   <button onClick={() => handleDelete(news.id)}>delete</button>
+                                                    <button
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                news.id
+                                                            )
+                                                        }
+                                                    >
+                                                        delete
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>

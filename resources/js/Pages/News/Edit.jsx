@@ -1,7 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Inertia } from "@inertiajs/inertia";
 import { Head, Link } from "@inertiajs/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function EditNews(props) {
     const [title, setTitle] = useState(props.myNews.title);
@@ -10,6 +10,15 @@ export default function EditNews(props) {
     const [image, setImage] = useState(null);
     const [isNotif, setIsNotif] = useState(false);
 
+    useEffect(() => {
+        if (props.flash.message) {
+            setIsNotif(true);
+            setTimeout(() => {
+                setIsNotif(false)
+            }, 4000);
+        }
+    }, [props.flash.message])
+
     const handleImageChange = (event) => {
         setImage(event.target.files[0]);
     };
@@ -17,19 +26,18 @@ export default function EditNews(props) {
     const handleSubmit = () => {
         const formData = new FormData();
         if (image) {
-            formData.append('image', image);
+            formData.append("image", image);
         }
-        formData.append('title', title);
-        formData.append('description', description);
-        formData.append('category_id', category);
-        formData.append('_method', 'PUT'); // Specify the PUT method for Inertia
+        formData.append("title", title);
+        formData.append("description", description);
+        formData.append("category_id", category);
+        formData.append("_method", "PUT"); // Specify the PUT method for Inertia
 
-        Inertia.post(`/news/${props.myNews.id}`, formData).then(() => {
-            setIsNotif(true);
-            setTimeout(() => {
-                setIsNotif(false);
-            }, 4000);
-        });
+        Inertia.post(`/news/${props.myNews.id}`, formData);
+        setIsNotif(true);
+        setTimeout(() => {
+            setIsNotif(false);
+        }, 4000);
     };
 
     return (
@@ -39,15 +47,11 @@ export default function EditNews(props) {
                 user={props.auth.user}
                 header={
                     <div className="flex">
-                        <Link
-                            href={route("myNews")}
-                            method="get"
-                            as="button"
-                        >
+                        <Link href={route("myNews")} method="get" as="button">
                             My News
                         </Link>{" "}
                         <span className="mx-2">/</span>
-                        <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                        <h2 className="font-semibold text-gray-800 leading-tight">
                             Edit News
                         </h2>
                     </div>
@@ -71,9 +75,10 @@ export default function EditNews(props) {
                                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                                         />
                                     </svg>
-                                    <span>{props.flash.message}!!</span>
+                                    <span>{props.flash.message}</span>
                                 </div>
                             )}
+
                             <input
                                 type="file"
                                 className="m-2"

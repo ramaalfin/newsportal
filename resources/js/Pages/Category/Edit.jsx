@@ -58,7 +58,7 @@ const CategoryEdit = (props) => {
                                     />
                                 </svg>
                                 <span>
-                                    Category has been successfully updated!!
+                                    {props.flash.message}
                                 </span>
                             </div>
                         )}

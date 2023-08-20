@@ -12,7 +12,7 @@ const CategoryTable = ({ categories, title, auth, flash }) => {
         if (successMessage) {
             const timeout = setTimeout(() => {
                 setSuccessMessage("");
-            }, 2000); // 5 seconds
+            }, 2000);
             return () => clearTimeout(timeout);
         }
 

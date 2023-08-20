@@ -22,7 +22,7 @@ class CreateNewsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'image' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+            'image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
             'title' => 'required|string',
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,id'

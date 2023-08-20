@@ -57,7 +57,7 @@ const CategoryCreate = (props) => {
                                     />
                                 </svg>
                                 <span>
-                                    Category has been successfully created!!
+                                    {props.flash.message}
                                 </span>
                             </div>
                         )}

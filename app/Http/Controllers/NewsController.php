@@ -27,7 +27,7 @@ class NewsController extends Controller
 
     public function myNews(){
         $categories = Category::all();
-        return Inertia::render('Post/MyNews', [
+        return Inertia::render('News/MyNews', [
             'categories' => $categories,
             'myNews' => News::with(['category', 'user'])->where('user_id', auth()->user()->id)->latest()->get(),
         ]);
@@ -39,9 +39,9 @@ class NewsController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return Inertia::render('Post/Create', [
-            'title' => "Post Create",
-            'categories' => $categories
+        return Inertia::render('News/Create', [
+            'title' => "News Create",
+            'categories' => $categories,
         ]);
     }
 
@@ -50,24 +50,25 @@ class NewsController extends Controller
      */
     public function store(CreateNewsRequest $request)
     {
-        // upload image
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imagePath = $image->storeAs('public/news', $image->hashName());
-            $imageName = basename($imagePath);
-        }
-
-        $news = News::create([
-            'image' => $imageName,
+        $newsData = [
             'title' => $request->title,
             'description' => $request->description,
             'category_id' => $request->category_id,
             'user_id' => auth()->user()->id
-        ]);
+        ];
 
-        $news->image = Storage::url($imageName);
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagePath = $image->storeAs('public/news', $image->hashName());
+            $imageName = basename($imagePath);
 
-        return redirect()->back()->with('message', 'News has beed successfully created');
+            $newsData['image'] = $imageName;
+            $newsData['image'] = Storage::url($imageName);
+        }
+
+        News::create($newsData);
+
+        return redirect()->back()->with('message', 'News has been successfully created');
     }
 
     /**
@@ -75,7 +76,7 @@ class NewsController extends Controller
      */
     public function show(News $news)
     {
-        return Inertia::render('Post/Show', [
+        return Inertia::render('News/Show', [
             'title' => "Detail News",
             'news' => $news,
             'categories' => Category::all()
@@ -88,7 +89,7 @@ class NewsController extends Controller
     public function edit(News $news)
     {
         $news->load('user', 'category');
-        return Inertia::render('Post/Edit', [
+        return Inertia::render('News/Edit', [
             "title" => "Edit News",
             "myNews" => $news,
             "categories" => Category::orderBy('name')->get()
@@ -131,9 +132,6 @@ class NewsController extends Controller
      */
     public function destroy(News $news)
     {
-        // if ($news->user_id !== Auth::id()) {
-        //     abort(403, 'Unauthorized');
-        // }
         $news->delete();
         return redirect()->back()->with('message', 'News has been successfully deleted!');
     }
