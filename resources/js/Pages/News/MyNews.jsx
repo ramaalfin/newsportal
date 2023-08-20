@@ -2,6 +2,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { Inertia } from "@inertiajs/inertia"; // Import Inertia
+import Paginator from "@/Components/Homepage/Paginator";
 
 export default function MyNews({ auth, myNews, flash }) {
     const [deleteMessage, setDeleteMessage] = useState(flash.message);
@@ -12,13 +13,13 @@ export default function MyNews({ auth, myNews, flash }) {
             }, 2000);
             return () => clearTimeout(timeout);
         }
-    })
+    });
 
     const handleDelete = (id) => {
         if (confirm("Are you sure want to delete this news?")) {
             Inertia.delete(`/news/${id}`).then(() => {
                 Inertia.reload({
-                    only: ['flash']
+                    only: ["flash"],
                 });
             });
         }
@@ -37,13 +38,13 @@ export default function MyNews({ auth, myNews, flash }) {
 
             <div className="py-4">
                 <div className="flex justify-center flex-col lg:flex-row lg:flex-wrap items-start gap-4 mx-8 my-4">
-                { deleteMessage && (
-                    <div className="alert alert-success mb-4">
-                        {deleteMessage}
-                    </div>
-                ) }
-                    {myNews && myNews.length > 0 ? (
-                        myNews.map((news, i) => {
+                    {deleteMessage && (
+                        <div className="alert alert-success mb-4">
+                            {deleteMessage}
+                        </div>
+                    )}
+                    {myNews && myNews.data.length > 0 ? (
+                        myNews.data.map((news, i) => {
                             return (
                                 <div
                                     key={i}
@@ -103,10 +104,13 @@ export default function MyNews({ auth, myNews, flash }) {
                         })
                     ) : (
                         <p className="flex justify-center items-center">
-                            You don't have any message
+                            You don't have any News
                         </p>
                     )}
                 </div>
+            </div>
+            <div className="row mt-3 flex justify-center items-center">
+                <Paginator news={myNews} />
             </div>
         </AuthenticatedLayout>
     );

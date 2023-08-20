@@ -17,7 +17,7 @@ class NewsController extends Controller
      */
     public function index()
     {
-        $news = News::with(['category', 'user'])->latest()->paginate(10);
+        $news = News::with(['category', 'user'])->latest()->paginate(9);
 
         return Inertia::render('Homepage', [
             'title' => 'Homepage',
@@ -27,9 +27,10 @@ class NewsController extends Controller
 
     public function myNews(){
         $categories = Category::all();
+        $news = News::with(['category', 'user'])->where('user_id', auth()->user()->id)->latest()->paginate(9);
         return Inertia::render('News/MyNews', [
             'categories' => $categories,
-            'myNews' => News::with(['category', 'user'])->where('user_id', auth()->user()->id)->latest()->get(),
+            'myNews' => $news,
         ]);
     }
 
