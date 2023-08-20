@@ -3,8 +3,8 @@ import { Head, Link } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
 import React, { useEffect, useState } from "react";
 
-const CategoryCreate = (props) => {
-    const [name, setName] = useState("");
+const TagEdit = (props) => {
+    const [name, setName] = useState(props.tag.name);
     const [isNotif, setIsNotif] = useState(props.flash.message);
 
     useEffect(() => {
@@ -17,11 +17,12 @@ const CategoryCreate = (props) => {
     })
 
     const handleSubmit = () => {
-        Inertia.post("/category", {
+        Inertia.put(`/tag/${props.tag.id}`, {
             name: name
         });
         setName("");
     }
+
     return(
         <div className="min-h-screen bg-slate-50">
             <Head title={props.title}/>
@@ -30,7 +31,7 @@ const CategoryCreate = (props) => {
                 header={
                     <div className="flex items-center">
                         <Link
-                            href={route("category.index")}
+                            href={route("tag.index")}
                             method="get"
                             as="button"
                             className="hover:text-slate-950"
@@ -39,7 +40,7 @@ const CategoryCreate = (props) => {
                         </Link>{" "}
                         <span className="mx-2">/</span>
                         <h2 className="font-semibold text-gray-800 leading-tight">
-                            Create Category
+                            Edit Tag
                         </h2>
                     </div>
                 }
@@ -68,22 +69,22 @@ const CategoryCreate = (props) => {
                         )}
                         <input
                             type="text"
-                            placeholder="Category Name"
+                            placeholder="Tag Name"
                             className="m-2 input input-bordered w-full"
-                            value={name}
+                            defaultValue={props.tag.name}
                             onChange={(event) => setName(event.target.value)}
                         />
                         <button
                             className="m-2 btn btn-primary w-full"
                             onClick={handleSubmit}
                         >
-                            Submit
+                            Update
                         </button>
                     </div>
                 </div>
             </AuthenticatedLayout>
         </div>
-    );
+    )
 }
 
-export default CategoryCreate;
+export default TagEdit;

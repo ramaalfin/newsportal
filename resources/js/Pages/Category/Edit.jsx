@@ -1,21 +1,26 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const CategoryEdit = (props) => {
     const [name, setName] = useState(props.category.name);
-    const [isNotif, setIsNotif] = useState(false);
+    const [isNotif, setIsNotif] = useState(props.flash.message);
+
+    useEffect(() => {
+        if (isNotif) {
+            const timeout = setTimeout(() => {
+                setIsNotif("")
+            }, 2000);
+            return () => clearTimeout(timeout);
+        }
+    })
 
     const handleSubmit = () => {
         Inertia.put(`/category/${props.category.id}`, {
             name: name
         });
-        setIsNotif(true);
         setName("");
-        setTimeout(() => {
-            setIsNotif(false);
-        }, 4000);
     }
 
     return(
